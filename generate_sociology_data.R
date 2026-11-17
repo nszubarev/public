@@ -227,24 +227,20 @@ generate_sociology_data <- function() {
   
   data <- as.data.frame(variables[selected])
   
-  for (j in seq_along(data)) {
-    
-    missing_prop <- runif(
-      1,
-      min = 0.03,
-      max = 0.10
-    )
-    
-    n_missing <- round(n * missing_prop)
-    
-    missing_rows <- sample(
-      seq_len(n),
-      size = n_missing,
-      replace = FALSE
-    )
-    
-    data[missing_rows, j] <- NA
-  }
+for (j in seq_along(data)) {
+  
+  # Choose missingness percentage for this column
+  missing_prop <- runif(1, 0.03, 0.10)
+  
+  # Number of missing observations
+  n_missing <- round(n * missing_prop)
+  
+  # Use charlatan to introduce missing values
+  data[[j]] <- charlatan::ch_missing(
+    data[[j]],
+    n = n_missing
+  )
+}
   
   data
 }
