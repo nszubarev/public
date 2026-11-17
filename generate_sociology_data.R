@@ -1,5 +1,3 @@
-```r
-
 generate_sociology_data <- function() {
   
   # ------------------------------------------------------------
@@ -293,4 +291,3 @@ generate_sociology_data <- function() {
   
   return(data)
 }
-```
