@@ -1,26 +1,12 @@
 generate_sociology_data <- function() {
   
-  # ------------------------------------------------------------
-  # 1. Randomly choose number of rows and columns
-  # ------------------------------------------------------------
-  
   n <- sample(1000:2000, 1)
   p <- sample(15:23, 1)
-  
-  # ------------------------------------------------------------
-  # 2. Approximately half categorical, half numeric
-  # ------------------------------------------------------------
   
   n_numeric <- floor(p / 2)
   n_categorical <- p - n_numeric
   
-  # ------------------------------------------------------------
-  # 3. Generate possible variables
-  # ------------------------------------------------------------
-  
   variables <- list(
-    
-    # ---------- CATEGORICAL ----------
     
     gender = factor(sample(
       c("Woman", "Man", "Non-binary", "Other",
@@ -32,16 +18,14 @@ generate_sociology_data <- function() {
     relationship_status = factor(sample(
       c("Single", "Married", "Cohabiting",
         "Divorced", "Widowed"),
-      n, replace = TRUE,
-      prob = c(.35, .25, .20, .12, .08)
+      n, replace = TRUE
     )),
     
     education = factor(
       sample(
         c("No qualification", "Secondary", "College",
           "Undergraduate", "Postgraduate"),
-        n, replace = TRUE,
-        prob = c(.05, .25, .20, .30, .20)
+        n, replace = TRUE
       ),
       levels = c(
         "No qualification",
@@ -56,23 +40,20 @@ generate_sociology_data <- function() {
     employment_status = factor(sample(
       c("Employed", "Unemployed", "Student",
         "Retired", "Not in labour force"),
-      n, replace = TRUE,
-      prob = c(.55, .08, .15, .12, .10)
+      n, replace = TRUE
     )),
     
     social_class = factor(sample(
       c("Working class", "Lower middle class",
         "Middle class", "Upper middle class"),
-      n, replace = TRUE,
-      prob = c(.25, .25, .35, .15)
+      n, replace = TRUE
     )),
     
     political_interest = factor(
       sample(
         c("Not at all", "Slightly", "Moderately",
           "Very", "Extremely"),
-        n, replace = TRUE,
-        prob = c(.12, .18, .30, .28, .12)
+        n, replace = TRUE
       ),
       levels = c(
         "Not at all",
@@ -87,14 +68,12 @@ generate_sociology_data <- function() {
     religion = factor(sample(
       c("Christian", "Muslim", "Hindu", "Jewish",
         "Other religion", "No religion"),
-      n, replace = TRUE,
-      prob = c(.35, .08, .04, .01, .07, .45)
+      n, replace = TRUE
     )),
     
     ethnicity = factor(sample(
       c("White", "Black", "Asian", "Mixed", "Other"),
-      n, replace = TRUE,
-      prob = c(.65, .10, .12, .08, .05)
+      n, replace = TRUE
     )),
     
     region = factor(sample(
@@ -107,25 +86,21 @@ generate_sociology_data <- function() {
     housing = factor(sample(
       c("Own outright", "Mortgage", "Private rent",
         "Social rent", "Living with family"),
-      n, replace = TRUE,
-      prob = c(.20, .30, .25, .15, .10)
+      n, replace = TRUE
     )),
     
-    occupation = factor(ch_job(n)),
+    occupation = factor(charlatan::ch_job(n)),
     
-    name = ch_name(n),
+    name = charlatan::ch_name(n),
     
-    
-    # ---------- NUMERIC ----------
-    
-    age = ch_integer(
+    age = charlatan::ch_integer(
       n = n,
       min = 18,
       max = 85
     ),
     
     income = round(
-      exp(ch_norm(
+      exp(charlatan::ch_norm(
         n = n,
         mean = log(35000),
         sd = 0.55
@@ -136,7 +111,7 @@ generate_sociology_data <- function() {
     hours_worked = round(
       pmax(
         0,
-        ch_norm(
+        charlatan::ch_norm(
           n = n,
           mean = 35,
           sd = 10
@@ -145,26 +120,26 @@ generate_sociology_data <- function() {
       1
     ),
     
-    life_satisfaction = ch_integer(
+    life_satisfaction = charlatan::ch_integer(
       n = n,
       min = 0,
       max = 10
     ),
     
-    political_scale = ch_integer(
+    political_scale = charlatan::ch_integer(
       n = n,
       min = 0,
       max = 10
     ),
     
-    trust_institutions = ch_integer(
+    trust_institutions = charlatan::ch_integer(
       n = n,
       min = 0,
       max = 10
     ),
     
     social_media_hours = round(
-      ch_unif(
+      charlatan::ch_unif(
         n = n,
         min = 0,
         max = 8
@@ -172,32 +147,32 @@ generate_sociology_data <- function() {
       1
     ),
     
-    household_size = ch_integer(
+    household_size = charlatan::ch_integer(
       n = n,
       min = 1,
       max = 8
     ),
     
-    children = ch_integer(
+    children = charlatan::ch_integer(
       n = n,
       min = 0,
       max = 5
     ),
     
-    commute_minutes = ch_integer(
+    commute_minutes = charlatan::ch_integer(
       n = n,
       min = 0,
       max = 120
     ),
     
-    neighbourhood_safety = ch_integer(
+    neighbourhood_safety = charlatan::ch_integer(
       n = n,
       min = 0,
       max = 10
     ),
     
     volunteering_hours = round(
-      ch_unif(
+      charlatan::ch_unif(
         n = n,
         min = 0,
         max = 20
@@ -205,11 +180,6 @@ generate_sociology_data <- function() {
       1
     )
   )
-  
-  
-  # ------------------------------------------------------------
-  # 4. Select variables
-  # ------------------------------------------------------------
   
   categorical_names <- c(
     "gender",
@@ -257,14 +227,6 @@ generate_sociology_data <- function() {
   
   data <- as.data.frame(variables[selected])
   
-  
-  # ------------------------------------------------------------
-  # 5. Add missing values
-  # ------------------------------------------------------------
-  
-  # Each column gets its own missing-value percentage,
-  # randomly chosen between 3% and 10%.
-  
   for (j in seq_along(data)) {
     
     missing_prop <- runif(
@@ -284,10 +246,5 @@ generate_sociology_data <- function() {
     data[missing_rows, j] <- NA
   }
   
-  
-  # ------------------------------------------------------------
-  # 6. Return dataset
-  # ------------------------------------------------------------
-  
-  return(data)
+  data
 }
