@@ -1,5 +1,4 @@
 ```r
-library(charlatan)
 
 generate_sociology_data <- function() {
   
