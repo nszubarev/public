@@ -1,21 +1,21 @@
 generate_sociology_data <- function() {
 
-  # Random number of rows and columns
-  n <- sample(1000:2000, 1)
-  p <- sample(15:23, 1)
+  # Random dimensions
+  n <- sample(1000:2000, size = 1)
+  p <- sample(15:23, size = 1)
 
-  # Approximately half numeric and half categorical variables
+  # Approximately half numeric and half categorical
   n_numeric <- floor(p / 2)
   n_categorical <- p - n_numeric
 
-  # Generate all possible variables
+  # All possible variables
   variables <- list(
 
     # Categorical variables
     gender = factor(
       sample(
         c("Male", "Female", "Other"),
-        n,
+        size = n,
         replace = TRUE
       )
     ),
@@ -23,7 +23,7 @@ generate_sociology_data <- function() {
     relationship_status = factor(
       sample(
         c("Single", "Married", "Divorced", "Widowed"),
-        n,
+        size = n,
         replace = TRUE
       )
     ),
@@ -31,7 +31,7 @@ generate_sociology_data <- function() {
     education = factor(
       sample(
         c("Primary", "Secondary", "Bachelor", "Master", "PhD"),
-        n,
+        size = n,
         replace = TRUE
       ),
       levels = c(
@@ -47,7 +47,7 @@ generate_sociology_data <- function() {
     employment_status = factor(
       sample(
         c("Employed", "Unemployed", "Student", "Retired"),
-        n,
+        size = n,
         replace = TRUE
       )
     ),
@@ -55,7 +55,7 @@ generate_sociology_data <- function() {
     social_class = factor(
       sample(
         c("Working", "Middle", "Upper-middle", "Upper"),
-        n,
+        size = n,
         replace = TRUE
       )
     ),
@@ -63,7 +63,7 @@ generate_sociology_data <- function() {
     political_interest = factor(
       sample(
         c("Very low", "Low", "Medium", "High", "Very high"),
-        n,
+        size = n,
         replace = TRUE
       ),
       levels = c(
@@ -79,7 +79,7 @@ generate_sociology_data <- function() {
     religion = factor(
       sample(
         c("None", "Christian", "Muslim", "Hindu", "Other"),
-        n,
+        size = n,
         replace = TRUE
       )
     ),
@@ -87,7 +87,7 @@ generate_sociology_data <- function() {
     ethnicity = factor(
       sample(
         c("Group A", "Group B", "Group C", "Group D", "Other"),
-        n,
+        size = n,
         replace = TRUE
       )
     ),
@@ -95,7 +95,7 @@ generate_sociology_data <- function() {
     region = factor(
       sample(
         c("North", "South", "East", "West", "Central"),
-        n,
+        size = n,
         replace = TRUE
       )
     ),
@@ -103,16 +103,16 @@ generate_sociology_data <- function() {
     housing = factor(
       sample(
         c("Own", "Rent", "Family", "Other"),
-        n,
+        size = n,
         replace = TRUE
       )
     ),
 
     occupation = factor(
-      charlatan::ch_job(n)
+      charlatan::ch_job(n = n)
     ),
 
-    name = charlatan::ch_name(n),
+    name = charlatan::ch_name(n = n),
 
     # Numeric variables
     age = charlatan::ch_integer(
@@ -128,8 +128,7 @@ generate_sociology_data <- function() {
           mean = log(35000),
           sd = 0.55
         )
-      ),
-      0
+      )
     ),
 
     hours_worked = round(
@@ -205,7 +204,7 @@ generate_sociology_data <- function() {
     )
   )
 
-  # Names of variables by type
+  # Variable names by type
   categorical_names <- c(
     "gender",
     "relationship_status",
@@ -236,52 +235,52 @@ generate_sociology_data <- function() {
     "volunteering_hours"
   )
 
-  # Randomly select approximately half of the variables
+  # Select variables
   selected_categorical <- sample(
     categorical_names,
-    n_categorical
+    size = n_categorical,
+    replace = FALSE
   )
 
   selected_numeric <- sample(
     numeric_names,
-    n_numeric
+    size = n_numeric,
+    replace = FALSE
   )
 
   selected <- sample(
-    c(
-      selected_categorical,
-      selected_numeric
-    )
+    c(selected_categorical, selected_numeric),
+    size = p,
+    replace = FALSE
   )
 
   # Create data frame
   data <- as.data.frame(
-    variables[selected]
+    variables[selected],
+    stringsAsFactors = FALSE
   )
 
-  # Add 3-10% missing values to EVERY column
-  # This preserves factor and ordered-factor classes
+  # Add 3-10% missing values to every column
   for (j in seq_along(data)) {
 
-    missing_prop <- runif(
+    proportion_missing <- runif(
       1,
       min = 0.03,
       max = 0.10
     )
 
-    n_missing <- round(
-      n * missing_prop
+    number_missing <- round(
+      n * proportion_missing
     )
 
-    missing_positions <- sample(
+    missing_rows <- sample(
       seq_len(n),
-      size = n_missing,
+      size = number_missing,
       replace = FALSE
     )
 
-    data[[j]][missing_positions] <- NA
+    data[[j]][missing_rows] <- NA
   }
 
-  # Return the generated dataset
   return(data)
 }
