@@ -1,145 +1,123 @@
-```r
-library(charlatan)
-
 generate_sociology_data <- function() {
-  
-  # ------------------------------------------------------------
-  # 1. Randomly choose number of rows and columns
-  # ------------------------------------------------------------
-  
+
+  # Random dimensions
   n <- sample(1000:2000, 1)
   p <- sample(15:23, 1)
-  
-  # ------------------------------------------------------------
-  # 2. Approximately half categorical, half numeric
-  # ------------------------------------------------------------
-  
+
+  # Approximately half numeric, half categorical
   n_numeric <- floor(p / 2)
   n_categorical <- p - n_numeric
-  
-  # ------------------------------------------------------------
-  # 3. Generate possible variables
-  # ------------------------------------------------------------
-  
+
+  # Generate variables
   variables <- list(
-    
-    # ---------- CATEGORICAL ----------
-    
-    gender = factor(sample(
-      c("Woman", "Man", "Non-binary", "Other",
-        "Prefer not to say"),
-      n, replace = TRUE,
-      prob = c(.48, .45, .03, .01, .03)
-    )),
-    
-    relationship_status = factor(sample(
-      c("Single", "Married", "Cohabiting",
-        "Divorced", "Widowed"),
-      n, replace = TRUE,
-      prob = c(.35, .25, .20, .12, .08)
-    )),
-    
+
+    # Categorical
+    gender = factor(
+      sample(c("Male", "Female", "Other"), n, replace = TRUE)
+    ),
+
+    relationship_status = factor(
+      sample(
+        c("Single", "Married", "Divorced", "Widowed"),
+        n,
+        replace = TRUE
+      )
+    ),
+
     education = factor(
       sample(
-        c("No qualification", "Secondary", "College",
-          "Undergraduate", "Postgraduate"),
-        n, replace = TRUE,
-        prob = c(.05, .25, .20, .30, .20)
+        c("Primary", "Secondary", "Bachelor", "Master", "PhD"),
+        n,
+        replace = TRUE
       ),
-      levels = c(
-        "No qualification",
-        "Secondary",
-        "College",
-        "Undergraduate",
-        "Postgraduate"
-      ),
+      levels = c("Primary", "Secondary", "Bachelor", "Master", "PhD"),
       ordered = TRUE
     ),
-    
-    employment_status = factor(sample(
-      c("Employed", "Unemployed", "Student",
-        "Retired", "Not in labour force"),
-      n, replace = TRUE,
-      prob = c(.55, .08, .15, .12, .10)
-    )),
-    
-    social_class = factor(sample(
-      c("Working class", "Lower middle class",
-        "Middle class", "Upper middle class"),
-      n, replace = TRUE,
-      prob = c(.25, .25, .35, .15)
-    )),
-    
+
+    employment_status = factor(
+      sample(
+        c("Employed", "Unemployed", "Student", "Retired"),
+        n,
+        replace = TRUE
+      )
+    ),
+
+    social_class = factor(
+      sample(
+        c("Working", "Middle", "Upper-middle", "Upper"),
+        n,
+        replace = TRUE
+      )
+    ),
+
     political_interest = factor(
       sample(
-        c("Not at all", "Slightly", "Moderately",
-          "Very", "Extremely"),
-        n, replace = TRUE,
-        prob = c(.12, .18, .30, .28, .12)
+        c("Very low", "Low", "Medium", "High", "Very high"),
+        n,
+        replace = TRUE
       ),
-      levels = c(
-        "Not at all",
-        "Slightly",
-        "Moderately",
-        "Very",
-        "Extremely"
-      ),
+      levels = c("Very low", "Low", "Medium", "High", "Very high"),
       ordered = TRUE
     ),
-    
-    religion = factor(sample(
-      c("Christian", "Muslim", "Hindu", "Jewish",
-        "Other religion", "No religion"),
-      n, replace = TRUE,
-      prob = c(.35, .08, .04, .01, .07, .45)
-    )),
-    
-    ethnicity = factor(sample(
-      c("White", "Black", "Asian", "Mixed", "Other"),
-      n, replace = TRUE,
-      prob = c(.65, .10, .12, .08, .05)
-    )),
-    
-    region = factor(sample(
-      c("North", "Midlands", "London",
-        "South East", "South West", "Wales",
-        "Scotland", "Northern Ireland"),
-      n, replace = TRUE
-    )),
-    
-    housing = factor(sample(
-      c("Own outright", "Mortgage", "Private rent",
-        "Social rent", "Living with family"),
-      n, replace = TRUE,
-      prob = c(.20, .30, .25, .15, .10)
-    )),
-    
-    occupation = factor(ch_job(n)),
-    
-    name = ch_name(n),
-    
-    
-    # ---------- NUMERIC ----------
-    
-    age = ch_integer(
+
+    religion = factor(
+      sample(
+        c("None", "Christian", "Muslim", "Hindu", "Other"),
+        n,
+        replace = TRUE
+      )
+    ),
+
+    ethnicity = factor(
+      sample(
+        c("Group A", "Group B", "Group C", "Group D", "Other"),
+        n,
+        replace = TRUE
+      )
+    ),
+
+    region = factor(
+      sample(
+        c("North", "South", "East", "West", "Central"),
+        n,
+        replace = TRUE
+      )
+    ),
+
+    housing = factor(
+      sample(
+        c("Own", "Rent", "Family", "Other"),
+        n,
+        replace = TRUE
+      )
+    ),
+
+    occupation = factor(charlatan::ch_job(n)),
+
+    name = charlatan::ch_name(n),
+
+    # Numeric
+    age = charlatan::ch_integer(
       n = n,
       min = 18,
       max = 85
     ),
-    
+
     income = round(
-      exp(ch_norm(
-        n = n,
-        mean = log(35000),
-        sd = 0.55
-      )),
+      exp(
+        charlatan::ch_norm(
+          n = n,
+          mean = log(35000),
+          sd = 0.55
+        )
+      ),
       0
     ),
-    
+
     hours_worked = round(
       pmax(
         0,
-        ch_norm(
+        charlatan::ch_norm(
           n = n,
           mean = 35,
           sd = 10
@@ -147,60 +125,60 @@ generate_sociology_data <- function() {
       ),
       1
     ),
-    
-    life_satisfaction = ch_integer(
+
+    life_satisfaction = charlatan::ch_integer(
       n = n,
       min = 0,
       max = 10
     ),
-    
-    political_scale = ch_integer(
+
+    political_scale = charlatan::ch_integer(
       n = n,
       min = 0,
       max = 10
     ),
-    
-    trust_institutions = ch_integer(
+
+    trust_institutions = charlatan::ch_integer(
       n = n,
       min = 0,
       max = 10
     ),
-    
+
     social_media_hours = round(
-      ch_unif(
+      charlatan::ch_unif(
         n = n,
         min = 0,
         max = 8
       ),
       1
     ),
-    
-    household_size = ch_integer(
+
+    household_size = charlatan::ch_integer(
       n = n,
       min = 1,
       max = 8
     ),
-    
-    children = ch_integer(
+
+    children = charlatan::ch_integer(
       n = n,
       min = 0,
       max = 5
     ),
-    
-    commute_minutes = ch_integer(
+
+    commute_minutes = charlatan::ch_integer(
       n = n,
       min = 0,
       max = 120
     ),
-    
-    neighbourhood_safety = ch_integer(
+
+    neighbourhood_safety = charlatan::ch_integer(
       n = n,
       min = 0,
       max = 10
     ),
-    
+
     volunteering_hours = round(
-      ch_unif(
+      charlatan::ch_unif(
         n = n,
         min = 0,
         max = 20
@@ -208,12 +186,8 @@ generate_sociology_data <- function() {
       1
     )
   )
-  
-  
-  # ------------------------------------------------------------
-  # 4. Select variables
-  # ------------------------------------------------------------
-  
+
+  # Variable names by type
   categorical_names <- c(
     "gender",
     "relationship_status",
@@ -228,7 +202,7 @@ generate_sociology_data <- function() {
     "occupation",
     "name"
   )
-  
+
   numeric_names <- c(
     "age",
     "income",
@@ -243,55 +217,48 @@ generate_sociology_data <- function() {
     "neighbourhood_safety",
     "volunteering_hours"
   )
-  
+
+  # Select approximately half numeric and half categorical variables
   selected_categorical <- sample(
     categorical_names,
     n_categorical
   )
-  
+
   selected_numeric <- sample(
     numeric_names,
     n_numeric
   )
-  
+
   selected <- sample(
     c(selected_categorical, selected_numeric)
   )
-  
-  data <- as.data.frame(variables[selected])
-  
-  
-  # ------------------------------------------------------------
-  # 5. Add missing values
-  # ------------------------------------------------------------
-  
-  # Each column gets its own missing-value percentage,
-  # randomly chosen between 3% and 10%.
-  
+
+  # Create data frame
+  data <- as.data.frame(
+    variables[selected]
+  )
+
+  # Add 3-10% missing values to every column
   for (j in seq_along(data)) {
-    
+
     missing_prop <- runif(
       1,
-      min = 0.03,
-      max = 0.10
+      0.03,
+      0.10
     )
-    
-    n_missing <- round(n * missing_prop)
-    
-    missing_rows <- sample(
+
+    n_missing <- round(
+      n * missing_prop
+    )
+
+    missing_positions <- sample(
       seq_len(n),
       size = n_missing,
       replace = FALSE
     )
-    
-    data[missing_rows, j] <- NA
+
+    data[[j]][missing_positions] <- NA
   }
-  
-  
-  # ------------------------------------------------------------
-  # 6. Return dataset
-  # ------------------------------------------------------------
-  
+
   return(data)
 }
-```
