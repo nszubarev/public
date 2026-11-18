@@ -1,19 +1,23 @@
 generate_sociology_data <- function() {
 
-  # Random dimensions
+  # Random number of rows and columns
   n <- sample(1000:2000, 1)
   p <- sample(15:23, 1)
 
-  # Approximately half numeric, half categorical
+  # Approximately half numeric and half categorical variables
   n_numeric <- floor(p / 2)
   n_categorical <- p - n_numeric
 
-  # Generate variables
+  # Generate all possible variables
   variables <- list(
 
-    # Categorical
+    # Categorical variables
     gender = factor(
-      sample(c("Male", "Female", "Other"), n, replace = TRUE)
+      sample(
+        c("Male", "Female", "Other"),
+        n,
+        replace = TRUE
+      )
     ),
 
     relationship_status = factor(
@@ -30,7 +34,13 @@ generate_sociology_data <- function() {
         n,
         replace = TRUE
       ),
-      levels = c("Primary", "Secondary", "Bachelor", "Master", "PhD"),
+      levels = c(
+        "Primary",
+        "Secondary",
+        "Bachelor",
+        "Master",
+        "PhD"
+      ),
       ordered = TRUE
     ),
 
@@ -56,7 +66,13 @@ generate_sociology_data <- function() {
         n,
         replace = TRUE
       ),
-      levels = c("Very low", "Low", "Medium", "High", "Very high"),
+      levels = c(
+        "Very low",
+        "Low",
+        "Medium",
+        "High",
+        "Very high"
+      ),
       ordered = TRUE
     ),
 
@@ -92,11 +108,13 @@ generate_sociology_data <- function() {
       )
     ),
 
-    occupation = factor(charlatan::ch_job(n)),
+    occupation = factor(
+      charlatan::ch_job(n)
+    ),
 
     name = charlatan::ch_name(n),
 
-    # Numeric
+    # Numeric variables
     age = charlatan::ch_integer(
       n = n,
       min = 18,
@@ -187,7 +205,7 @@ generate_sociology_data <- function() {
     )
   )
 
-  # Variable names by type
+  # Names of variables by type
   categorical_names <- c(
     "gender",
     "relationship_status",
@@ -218,7 +236,7 @@ generate_sociology_data <- function() {
     "volunteering_hours"
   )
 
-  # Select approximately half numeric and half categorical variables
+  # Randomly select approximately half of the variables
   selected_categorical <- sample(
     categorical_names,
     n_categorical
@@ -230,7 +248,10 @@ generate_sociology_data <- function() {
   )
 
   selected <- sample(
-    c(selected_categorical, selected_numeric)
+    c(
+      selected_categorical,
+      selected_numeric
+    )
   )
 
   # Create data frame
@@ -238,13 +259,14 @@ generate_sociology_data <- function() {
     variables[selected]
   )
 
-  # Add 3-10% missing values to every column
+  # Add 3-10% missing values to EVERY column
+  # This preserves factor and ordered-factor classes
   for (j in seq_along(data)) {
 
     missing_prop <- runif(
       1,
-      0.03,
-      0.10
+      min = 0.03,
+      max = 0.10
     )
 
     n_missing <- round(
@@ -260,5 +282,6 @@ generate_sociology_data <- function() {
     data[[j]][missing_positions] <- NA
   }
 
+  # Return the generated dataset
   return(data)
 }
